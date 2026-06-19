@@ -79,15 +79,15 @@ export const CASES: CaseDef[] = [
 //  UKŁADY SALI — aktywny jest dokładnie JEDEN blok PARTICIPANTS.
 // ===========================================================================
 
-// --- OPCJA A: 3 PARY (6 osób) — AKTYWNA ------------------------------------
-//  P1  337634f7 = Kupujący      | d7db6c8e = Devkraft
-//  P2  9b3e447b = Kupujący      | 12bd1a62 = Meridian
-//  P3  d4d0c6c8 = Kupujący      | fd4626f2 = Devkraft
+// --- OPCJA A: 3 PARY (6 osób) — wszystkie identyczne: Kupujący vs Devkraft ---
+//  P1  337634f7 = Kupujący | d7db6c8e = Devkraft
+//  P2  9b3e447b = Kupujący | 12bd1a62 = Devkraft
+//  P3  d4d0c6c8 = Kupujący | fd4626f2 = Devkraft
 export const PARTICIPANTS: Participant[] = [
   { token: "337634f7", pairId: "P1", side: "A", caseId: "devy-tani" },
   { token: "d7db6c8e", pairId: "P1", side: "B", caseId: "devy-tani" },
-  { token: "9b3e447b", pairId: "P2", side: "A", caseId: "devy-solidny" },
-  { token: "12bd1a62", pairId: "P2", side: "B", caseId: "devy-solidny" },
+  { token: "9b3e447b", pairId: "P2", side: "A", caseId: "devy-tani" },
+  { token: "12bd1a62", pairId: "P2", side: "B", caseId: "devy-tani" },
   { token: "d4d0c6c8", pairId: "P3", side: "A", caseId: "devy-tani" },
   { token: "fd4626f2", pairId: "P3", side: "B", caseId: "devy-tani" },
 ];
