@@ -1,8 +1,7 @@
 // ============================================================================
-//  KONFIGURACJA — to jedyny plik, który edytujesz przed szkoleniem.
-//  1) Wklej swój case (lub kilka) do CASES.
-//  2) Wygeneruj 12 tokenów: `npm run gen` i wklej do PARTICIPANTS.
-//  3) Wydrukuj karteczki (po 6 dla każdej strony) i rozdaj losowo.
+//  lib/config.ts — case „Helios" + trzy układy sali.
+//  Aktywna jest OPCJA A (3 pary). Żeby przełączyć na B lub C: zakomentuj
+//  aktywny blok PARTICIPANTS i odkomentuj wybrany (dokładnie JEDEN aktywny).
 // ============================================================================
 
 export type Side = "A" | "B";
@@ -15,81 +14,113 @@ export interface Msg {
 }
 
 export interface Brief {
-  roleLabel: string; // np. "Sprzedający", "Kupujący", "Mediowany 1"
-  brief: string;     // POUFNE instrukcje tej strony (druga strona ich nie widzi)
+  roleLabel: string;
+  brief: string;
 }
 
 export interface CaseDef {
   id: string;
   title: string;
-  shared?: string;            // kontekst wspólny dla obu stron (opcjonalnie)
+  shared?: string;
   briefs: Record<Side, Brief>;
 }
 
 export interface Participant {
-  token: string;   // unikatowy klucz z karteczki
-  pairId: string;  // "P1".."P6" — wiąże dwie osoby w parę
-  side: Side;      // "A" albo "B"
-  caseId: string;  // który case (możesz dać różne parom)
+  token: string;
+  pairId: string;
+  side: Side;
+  caseId: string;
 }
 
 // ---------------------------------------------------------------------------
-//  CASES — przykład; podmień na swój (ZOPA/BATNA itd.)
+//  Treść case'a (briefy współdzielone między wariantami tani/solidny)
 // ---------------------------------------------------------------------------
+const SHARED = `Helios Retail — szybko rosnący gracz e-commerce — podpisał umowę na uruchomienie white-label'owej platformy zakupowej dla dużego partnera. Partner przesunął datę go-live do przodu: zostało 16 tygodni do twardego, umownego terminu z karami i ekspozycją wizerunkową. Wewnętrzny zespół nie wyrabia — zarząd zdecydował: dokupić moce.
+
+Helios potrzebuje ok. 10 developerów (mix senior/mid), osadzonych przy własnym zespole, na ~4 miesiące, startujących jak najszybciej. To zakup interwencyjny — nieplanowany, pod presją. Cała rozmowa toczy się wyłącznie mailowo i zdalnie; nie znasz tożsamości drugiej strony. Brak porozumienia jest dopuszczalnym wynikiem.
+
+Na stole sześć kwestii: stawka (€/dev/dzień), skład zespołu (ilu seniorów), tempo rozruchu, gwarancje (wymiana w X h, okres próbny, SLA/kary), długość zobowiązania i wyjście, płatność (zaliczka vs z dołu).`;
+
+const BUYER = `POUFNE — tylko dla Ciebie. Jesteś Dyrektorem Dostarczania w Helios Retail i osobiście odpowiadasz za termin.
+
+• Budżet zatwierdzony przez zarząd: max €500/dev/dzień (uśredniona). Cel: ~€430. Przekroczenie €500 wymaga zgody CFO — wolno i niechętnie; w ostateczności wypchniesz do ~€540, jeśli jakość to uzasadnia, ale kosztuje Cię to czas i kapitał polityczny.
+• Twarda potrzeba: min. 4 prawdziwych seniorów. Reszta mid.
+• Czas krytyczny — każdy tydzień zwłoki zjada bufor; chcesz pełny zespół w 2 tygodnie.
+• Chcesz: wymianę słabego człowieka w 48 h, 2-tygodniowy okres próbny, checkpoint dostawy. Wolisz płatność miesięcznie z dołu.
+• Twoja BATNA jest słaba (sklecanie freelancerów albo obsunięcie terminu z karami) — NIE zdradzaj, jak bardzo.
+• Jeśli prowadzisz dwóch dostawców równolegle: możesz powoływać się na warunki konkurenta, by wyciskać ustępstwa; masz też opcję podziału zespołu (np. 6+4) — to możliwość, nie obowiązek. W parze: skup się na domknięciu jednego dostawcy.`;
+
+const DEVKRAFT = `POUFNE — tylko dla Ciebie. Reprezentujesz „Devkraft" — młody, szybko rosnący software house.
+
+• Potrzebujesz tego kontraktu: cash flow i marka referencyjna (logo Heliosa). Twoja BATNA słaba — pipeline cienki.
+• Twój próg: €300/dev/dzień (poniżej tracisz). Otworzyłeś od €380. Na cenie możesz zejść nisko, by wygrać.
+• Realia, które musisz umiejętnie kryć: 10 osób wystawisz szybko (start ~1 tydzień), ale tylko ~2 to prawdziwi seniorzy; reszta mid/junior, część rekrutacji jeszcze niepotwierdzona (cienka ławka). „4 seniorów" to dla Ciebie spore naciągnięcie.
+• Boisz się twardych gwarancji (wymiana w 48 h, kary) — ale okres próbny możesz przyjąć, bo wierzysz w zaangażowanie, jeśli nie w same tytuły.
+• Chętnie weźmiesz dłuższe zobowiązanie (stabilność) i jakąś zaliczkę (cash flow).`;
+
+const MERIDIAN = `POUFNE — tylko dla Ciebie. Reprezentujesz „Meridian Software" — uznaną, premium'ową konsultację.
+
+• Masz mocną BATNA — pełny pipeline i innych klientów; ten deal jest „miło mieć", nie gonisz go ze stratą dla marki.
+• Twój próg: €520/dev/dzień — poniżej psujesz marżę i premium'owe pozycjonowanie; wolisz odejść. Otworzyłeś od €620. Rabatujesz niechętnie i mało.
+• Dajesz tanio (bo jesteś pewny): gwarancja wymiany w 48 h, referencje, 2-tygodniowy okres próbny, zespół z przewagą seniorów. Wystawisz 6 osób od ręki, pełne 10 w ~3 tygodnie (chronisz jakość ponad tempo).
+• Wolisz: min. 4 miesiące zobowiązania, 30% zaliczki; nie lubisz dotkliwych kar (umiarkowane przyjmiesz).
+• Jeśli wyczujesz tańszego konkurenta — nie wpadaj w wojnę cenową; uzasadnij premię (pewność dostawy, niższe ryzyko) i handluj warunkami pozacenowymi.`;
+
 export const CASES: CaseDef[] = [
-  {
-    id: "furgonetka",
-    title: "Sprzedaż używanej furgonetki",
-    shared:
-      "Negocjujecie cenę sprzedaży 6-letniej furgonetki dostawczej (przebieg 140 000 km, " +
-      "stan dobry, świeży przegląd). Cała negocjacja odbywa się wyłącznie korespondencyjnie. " +
-      "Nie znasz tożsamości drugiej strony. Macie 3 dni. Brak porozumienia jest dopuszczalnym wynikiem.",
-    briefs: {
-      A: {
-        roleLabel: "Sprzedający",
-        brief:
-          "POUFNE — tylko dla Ciebie.\n\n" +
-          "Sprzedajesz furgonetkę, bo kupujesz większy model. Pieniądze przydadzą się na zaliczkę, " +
-          "ale nie palą Ci się ręce — możesz poczekać.\n\n" +
-          "• Twoja cena wywoławcza w ogłoszeniu: 72 000 zł.\n" +
-          "• Twoja realna cena minimalna (poniżej nie sprzedajesz): 58 000 zł.\n" +
-          "• Masz drugiego zainteresowanego, który oferował 60 000 zł, ale jest niepewny (BATNA).\n" +
-          "• Auto ma drobną rysę na drzwiach i wkrótce wymaga nowych opon (~3 000 zł) — kupujący może to wytknąć.\n\n" +
-          "Nie ujawniaj ceny minimalnej ani drugiego kupca wprost.",
-      },
-      B: {
-        roleLabel: "Kupujący",
-        brief:
-          "POUFNE — tylko dla Ciebie.\n\n" +
-          "Potrzebujesz furgonetki do rozwijanej działalności. Ta pasuje idealnie, ale rynek ma kilka podobnych.\n\n" +
-          "• Twój budżet maksymalny (powyżej nie kupujesz): 66 000 zł.\n" +
-          "• Twoja cena docelowa: 60 000 zł.\n" +
-          "• Widziałeś podobne auto za 64 000 zł, ale z większym przebiegiem (BATNA).\n" +
-          "• Zależy Ci na czasie — chcesz zamknąć temat w ciągu tygodnia.\n\n" +
-          "Nie ujawniaj budżetu maksymalnego. Masz prawo dopytywać o stan techniczny.",
-      },
-    },
-  },
+  { id: "devy-tani", title: "Pilna dostawa zespołu — Helios Retail", shared: SHARED,
+    briefs: { A: { roleLabel: "Kupujący (Helios)", brief: BUYER },
+              B: { roleLabel: "Dostawca — Devkraft", brief: DEVKRAFT } } },
+  { id: "devy-solidny", title: "Pilna dostawa zespołu — Helios Retail", shared: SHARED,
+    briefs: { A: { roleLabel: "Kupujący (Helios)", brief: BUYER },
+              B: { roleLabel: "Dostawca — Meridian", brief: MERIDIAN } } },
 ];
 
-// ---------------------------------------------------------------------------
-//  PARTICIPANTS — 6 par. Podmień tokeny na wygenerowane (`npm run gen`).
-//  Strona A i B tej samej pary muszą mieć ten sam pairId i caseId.
-// ---------------------------------------------------------------------------
+// ===========================================================================
+//  UKŁADY SALI — aktywny jest dokładnie JEDEN blok PARTICIPANTS.
+// ===========================================================================
+
+// --- OPCJA A: 3 PARY (6 osób) — AKTYWNA ------------------------------------
+//  P1  337634f7 = Kupujący      | d7db6c8e = Devkraft
+//  P2  9b3e447b = Kupujący      | 12bd1a62 = Meridian
+//  P3  d4d0c6c8 = Kupujący      | fd4626f2 = Devkraft
 export const PARTICIPANTS: Participant[] = [
-  { token: "a1-PRZYKLAD", pairId: "P1", side: "A", caseId: "furgonetka" },
-  { token: "b1-PRZYKLAD", pairId: "P1", side: "B", caseId: "furgonetka" },
-  { token: "a2-PRZYKLAD", pairId: "P2", side: "A", caseId: "furgonetka" },
-  { token: "b2-PRZYKLAD", pairId: "P2", side: "B", caseId: "furgonetka" },
-  { token: "a3-PRZYKLAD", pairId: "P3", side: "A", caseId: "furgonetka" },
-  { token: "b3-PRZYKLAD", pairId: "P3", side: "B", caseId: "furgonetka" },
-  { token: "a4-PRZYKLAD", pairId: "P4", side: "A", caseId: "furgonetka" },
-  { token: "b4-PRZYKLAD", pairId: "P4", side: "B", caseId: "furgonetka" },
-  { token: "a5-PRZYKLAD", pairId: "P5", side: "A", caseId: "furgonetka" },
-  { token: "b5-PRZYKLAD", pairId: "P5", side: "B", caseId: "furgonetka" },
-  { token: "a6-PRZYKLAD", pairId: "P6", side: "A", caseId: "furgonetka" },
-  { token: "b6-PRZYKLAD", pairId: "P6", side: "B", caseId: "furgonetka" },
+  { token: "337634f7", pairId: "P1", side: "A", caseId: "devy-tani" },
+  { token: "d7db6c8e", pairId: "P1", side: "B", caseId: "devy-tani" },
+  { token: "9b3e447b", pairId: "P2", side: "A", caseId: "devy-solidny" },
+  { token: "12bd1a62", pairId: "P2", side: "B", caseId: "devy-solidny" },
+  { token: "d4d0c6c8", pairId: "P3", side: "A", caseId: "devy-tani" },
+  { token: "fd4626f2", pairId: "P3", side: "B", caseId: "devy-tani" },
 ];
+
+// --- OPCJA B: 2 TRÓJKI (6 osób) --------------------------------------------
+//  Każdy kupujący to JEDNA osoba z DWIEMA kartami (dwa wątki, dwie zakładki).
+//  Trójka 1 — kupujący = eea56291 + c24aea22 (ta sama osoba)
+//             471ca51e = Devkraft | 1afe4d2f = Meridian
+//  Trójka 2 — kupujący = 188c6a62 + 35437b25 (ta sama osoba)
+//             349b5a49 = Devkraft | 1610e034 = Meridian
+// export const PARTICIPANTS: Participant[] = [
+//   { token: "eea56291", pairId: "T1a", side: "A", caseId: "devy-tani" },     // kupujący 1 ↔ Devkraft
+//   { token: "471ca51e", pairId: "T1a", side: "B", caseId: "devy-tani" },     // Devkraft
+//   { token: "c24aea22", pairId: "T1b", side: "A", caseId: "devy-solidny" },  // kupujący 1 ↔ Meridian (druga karta)
+//   { token: "1afe4d2f", pairId: "T1b", side: "B", caseId: "devy-solidny" },  // Meridian
+//   { token: "188c6a62", pairId: "T2a", side: "A", caseId: "devy-tani" },     // kupujący 2 ↔ Devkraft
+//   { token: "349b5a49", pairId: "T2a", side: "B", caseId: "devy-tani" },     // Devkraft
+//   { token: "35437b25", pairId: "T2b", side: "A", caseId: "devy-solidny" },  // kupujący 2 ↔ Meridian (druga karta)
+//   { token: "1610e034", pairId: "T2b", side: "B", caseId: "devy-solidny" },  // Meridian
+// ];
+
+// --- OPCJA C: 1 TRÓJKA + 1 PARA (5 osób) -----------------------------------
+//  Trójka — kupujący = a3d2363c + c233c488 (ta sama osoba)
+//           f9221408 = Devkraft | 4a721ac3 = Meridian
+//  Para   — ef10ccce = Kupujący | 598debb8 = Devkraft
+// export const PARTICIPANTS: Participant[] = [
+//   { token: "a3d2363c", pairId: "T1a", side: "A", caseId: "devy-tani" },     // kupujący ↔ Devkraft
+//   { token: "f9221408", pairId: "T1a", side: "B", caseId: "devy-tani" },     // Devkraft
+//   { token: "c233c488", pairId: "T1b", side: "A", caseId: "devy-solidny" },  // kupujący ↔ Meridian (druga karta)
+//   { token: "4a721ac3", pairId: "T1b", side: "B", caseId: "devy-solidny" },  // Meridian
+//   { token: "ef10ccce", pairId: "P1",  side: "A", caseId: "devy-tani" },     // para: Kupujący
+//   { token: "598debb8", pairId: "P1",  side: "B", caseId: "devy-tani" },     // para: Devkraft
+// ];
 
 // ---------------------------------------------------------------------------
 export const ADMIN_TOKEN = process.env.ADMIN_TOKEN ?? "zmien-mnie-admin";
