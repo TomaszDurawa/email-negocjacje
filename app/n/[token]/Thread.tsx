@@ -18,11 +18,15 @@ export default function Thread({
   side,
   roleLabel,
   initial,
+  counterpartLabel = "Druga strona",
+  sticky = true,
 }: {
   token: string;
   side: Side;
   roleLabel: string;
   initial: Msg[];
+  counterpartLabel?: string;
+  sticky?: boolean;
 }) {
   const [messages, setMessages] = useState<Msg[]>(initial);
   const [subject, setSubject] = useState("");
@@ -31,7 +35,6 @@ export default function Thread({
   const [error, setError] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Odpytywanie o nowe wiadomości co 15 s.
   useEffect(() => {
     const id = setInterval(async () => {
       try {
@@ -90,7 +93,7 @@ export default function Thread({
             <div key={i} className={`msg ${mine ? "you" : ""}`}>
               <div className="meta">
                 <span className={`who ${mine ? "you" : ""}`}>
-                  {mine ? `Ty (${roleLabel})` : "Druga strona"}
+                  {mine ? `Ty (${roleLabel})` : counterpartLabel}
                 </span>
                 <span className="when">{fmt(m.ts)}</span>
               </div>
@@ -102,7 +105,10 @@ export default function Thread({
         <div ref={bottomRef} />
       </div>
 
-      <div className="composer">
+      <div
+        className="composer"
+        style={sticky ? undefined : { position: "static", background: "transparent", paddingTop: 0 }}
+      >
         <div className="box">
           <input
             type="text"
