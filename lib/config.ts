@@ -32,6 +32,16 @@ export interface Participant {
   caseId: string;
 }
 
+export interface ConsoleLeg { token: string; label: string; }
+export interface BuyerConsole {
+  token: string;
+  roleLabel: string;
+  title: string;
+  shared?: string;
+  brief: string;
+  legs: ConsoleLeg[];
+}
+
 // ---------------------------------------------------------------------------
 //  Treść case'a
 // ---------------------------------------------------------------------------
@@ -92,32 +102,46 @@ export const PARTICIPANTS: Participant[] = [
   { token: "fd4626f2", pairId: "P3", side: "B", caseId: "devy-tani" },
 ];
 
-// --- OPCJA B: 2 TRÓJKI (6 osób) --------------------------------------------
-//  Kupujący = JEDNA osoba z DWIEMA kartami (dwa wątki, dwie zakładki).
-//  Trójka 1 — kupujący = eea56291 + c24aea22 | 471ca51e = Devkraft | 1afe4d2f = Meridian
-//  Trójka 2 — kupujący = 188c6a62 + 35437b25 | 349b5a49 = Devkraft | 1610e034 = Meridian
+// --- OPCJA B: 2 TRÓJKI (6 osób) — kupujący ma JEDNĄ kartę (konsola) -------
+//  KARTY DO DRUKU (6): 00d8871e (Kupujący 1), 3b89575d, fdd7bfb1 (dostawcy 1),
+//                      9dd52e3c (Kupujący 2), 7f267edd, c7f3f697 (dostawcy 2).
+//  Tokeny *leg* (12ce3aaf/75aadaa4/5c8b22e8/929d0504) są WEWNĘTRZNE — NIE drukujesz;
+//  konsola kupującego (niżej, CONSOLES) ogarnia oba wątki pod jednym tokenem.
 // export const PARTICIPANTS: Participant[] = [
-//   { token: "eea56291", pairId: "T1a", side: "A", caseId: "devy-tani" },
-//   { token: "471ca51e", pairId: "T1a", side: "B", caseId: "devy-tani" },
-//   { token: "c24aea22", pairId: "T1b", side: "A", caseId: "devy-solidny" },
-//   { token: "1afe4d2f", pairId: "T1b", side: "B", caseId: "devy-solidny" },
-//   { token: "188c6a62", pairId: "T2a", side: "A", caseId: "devy-tani" },
-//   { token: "349b5a49", pairId: "T2a", side: "B", caseId: "devy-tani" },
-//   { token: "35437b25", pairId: "T2b", side: "A", caseId: "devy-solidny" },
-//   { token: "1610e034", pairId: "T2b", side: "B", caseId: "devy-solidny" },
+//   { token: "12ce3aaf", pairId: "T1a", side: "A", caseId: "devy-tani" },     // Kupujący 1 -> Dostawca 1
+//   { token: "3b89575d", pairId: "T1a", side: "B", caseId: "devy-tani" },     // Dostawca 1 (Devkraft)
+//   { token: "75aadaa4", pairId: "T1b", side: "A", caseId: "devy-solidny" },  // Kupujący 1 -> Dostawca 2
+//   { token: "fdd7bfb1", pairId: "T1b", side: "B", caseId: "devy-solidny" },  // Dostawca 2 (Meridian)
+//   { token: "5c8b22e8", pairId: "T2a", side: "A", caseId: "devy-tani" },     // Kupujący 2 -> Dostawca 1
+//   { token: "7f267edd", pairId: "T2a", side: "B", caseId: "devy-tani" },     // Dostawca 1 (Devkraft)
+//   { token: "929d0504", pairId: "T2b", side: "A", caseId: "devy-solidny" },  // Kupujący 2 -> Dostawca 2
+//   { token: "c7f3f697", pairId: "T2b", side: "B", caseId: "devy-solidny" },  // Dostawca 2 (Meridian)
 // ];
 
 // --- OPCJA C: 1 TRÓJKA + 1 PARA (5 osób) -----------------------------------
-//  Trójka — kupujący = a3d2363c + c233c488 | f9221408 = Devkraft | 4a721ac3 = Meridian
-//  Para   — ef10ccce = Kupujący | 598debb8 = Devkraft
+//  KARTY DO DRUKU (5): f42e9dfc (Kupujący-trójka), 83308caf, 3f1edd92 (dostawcy),
+//                      150d0653, 4552ff16 (para). Tokeny 5188e720/28ff4642 WEWNĘTRZNE.
 // export const PARTICIPANTS: Participant[] = [
-//   { token: "a3d2363c", pairId: "T1a", side: "A", caseId: "devy-tani" },
-//   { token: "f9221408", pairId: "T1a", side: "B", caseId: "devy-tani" },
-//   { token: "c233c488", pairId: "T1b", side: "A", caseId: "devy-solidny" },
-//   { token: "4a721ac3", pairId: "T1b", side: "B", caseId: "devy-solidny" },
-//   { token: "ef10ccce", pairId: "P1",  side: "A", caseId: "devy-tani" },
-//   { token: "598debb8", pairId: "P1",  side: "B", caseId: "devy-tani" },
+//   { token: "5188e720", pairId: "T1a", side: "A", caseId: "devy-tani" },     // Kupujący-trójka -> Dostawca 1
+//   { token: "83308caf", pairId: "T1a", side: "B", caseId: "devy-tani" },     // Dostawca 1 (Devkraft)
+//   { token: "28ff4642", pairId: "T1b", side: "A", caseId: "devy-solidny" },  // Kupujący-trójka -> Dostawca 2
+//   { token: "3f1edd92", pairId: "T1b", side: "B", caseId: "devy-solidny" },  // Dostawca 2 (Meridian)
+//   { token: "150d0653", pairId: "P1",  side: "A", caseId: "devy-tani" },     // Para: Kupujący
+//   { token: "4552ff16", pairId: "P1",  side: "B", caseId: "devy-tani" },     // Para: Devkraft
 // ];
+
+// --- KONSOLE KUPUJĄCEGO (jeden token = dwie rozmowy) — dotyczą układów B/C ---
+export const CONSOLES: BuyerConsole[] = [
+  { token: "00d8871e", roleLabel: "Kupujący (Helios)", title: "Pilna dostawa zespołu — Helios Retail",
+    shared: SHARED, brief: BUYER,
+    legs: [{ token: "12ce3aaf", label: "Dostawca 1" }, { token: "75aadaa4", label: "Dostawca 2" }] },
+  { token: "9dd52e3c", roleLabel: "Kupujący (Helios)", title: "Pilna dostawa zespołu — Helios Retail",
+    shared: SHARED, brief: BUYER,
+    legs: [{ token: "5c8b22e8", label: "Dostawca 1" }, { token: "929d0504", label: "Dostawca 2" }] },
+  { token: "f42e9dfc", roleLabel: "Kupujący (Helios)", title: "Pilna dostawa zespołu — Helios Retail",
+    shared: SHARED, brief: BUYER,
+    legs: [{ token: "5188e720", label: "Dostawca 1" }, { token: "28ff4642", label: "Dostawca 2" }] },
+];
 
 // ---------------------------------------------------------------------------
 export const ADMIN_TOKEN = process.env.ADMIN_TOKEN ?? "zmien-mnie-admin";
@@ -128,6 +152,10 @@ export function findParticipant(token: string): Participant | undefined {
 
 export function findCase(caseId: string): CaseDef | undefined {
   return CASES.find((c) => c.id === caseId);
+}
+
+export function findConsole(token: string): BuyerConsole | undefined {
+  return CONSOLES.find((c) => c.token === token);
 }
 
 export function pairs(): { pairId: string; A?: Participant; B?: Participant }[] {
