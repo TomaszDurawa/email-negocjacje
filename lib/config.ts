@@ -1,7 +1,7 @@
 // ============================================================================
-//  lib/config.ts — case „Helios" (teksty pod nietechnicznych) + układy sali.
-//  Aktywna OPCJA A (3 pary, wszystkie Kupujący vs Devkraft). B i C niżej,
-//  zakomentowane — odkomentuj dokładnie JEDEN blok PARTICIPANTS.
+//  lib/config.ts — case „Helios” (teksty pod nietechnicznych).
+//  AKTYWNY UKŁAD A — 3 pary (Kupujący vs Devkraft).
+//  Zmiana układu = podmień CAŁY ten plik na config-A / config-B / config-C.
 // ============================================================================
 
 export type Side = "A" | "B";
@@ -85,62 +85,30 @@ export const CASES: CaseDef[] = [
               B: { roleLabel: "Dostawca — Meridian", brief: MERIDIAN } } },
 ];
 
-// ===========================================================================
-//  UKŁADY SALI — aktywny dokładnie JEDEN blok PARTICIPANTS.
-// ===========================================================================
-
-// --- OPCJA A: 3 PARY (6 osób) — wszystkie identyczne: Kupujący vs Devkraft --
-//  P1  337634f7 = Kupujący | d7db6c8e = Devkraft
-//  P2  9b3e447b = Kupujący | 12bd1a62 = Devkraft
-//  P3  d4d0c6c8 = Kupujący | fd4626f2 = Devkraft
+// ====== UKŁAD A: 3 PARY (6 osób) · rozdaj losowo ======
+//  P1  8a814fbb=Kupujący  befca826=Devkraft
+//  P2  28cef4da=Kupujący  79a42811=Devkraft
+//  P3  b4e44168=Kupujący  9a08ea57=Devkraft
 export const PARTICIPANTS: Participant[] = [
-  { token: "337634f7", pairId: "P1", side: "A", caseId: "devy-tani" },
-  { token: "d7db6c8e", pairId: "P1", side: "B", caseId: "devy-tani" },
-  { token: "9b3e447b", pairId: "P2", side: "A", caseId: "devy-tani" },
-  { token: "12bd1a62", pairId: "P2", side: "B", caseId: "devy-tani" },
-  { token: "d4d0c6c8", pairId: "P3", side: "A", caseId: "devy-tani" },
-  { token: "fd4626f2", pairId: "P3", side: "B", caseId: "devy-tani" },
+  { token: "8a814fbb", pairId: "P1", side: "A", caseId: "devy-tani" },
+  { token: "befca826", pairId: "P1", side: "B", caseId: "devy-tani" },
+  { token: "28cef4da", pairId: "P2", side: "A", caseId: "devy-tani" },
+  { token: "79a42811", pairId: "P2", side: "B", caseId: "devy-tani" },
+  { token: "b4e44168", pairId: "P3", side: "A", caseId: "devy-tani" },
+  { token: "9a08ea57", pairId: "P3", side: "B", caseId: "devy-tani" },
 ];
-
-// --- OPCJA B: 2 TRÓJKI (6 osób) — kupujący ma JEDNĄ kartę (konsola) -------
-//  KARTY DO DRUKU (6): 00d8871e (Kupujący 1), 3b89575d, fdd7bfb1 (dostawcy 1),
-//                      9dd52e3c (Kupujący 2), 7f267edd, c7f3f697 (dostawcy 2).
-//  Tokeny *leg* (12ce3aaf/75aadaa4/5c8b22e8/929d0504) są WEWNĘTRZNE — NIE drukujesz;
-//  konsola kupującego (niżej, CONSOLES) ogarnia oba wątki pod jednym tokenem.
-// export const PARTICIPANTS: Participant[] = [
-//   { token: "12ce3aaf", pairId: "T1a", side: "A", caseId: "devy-tani" },     // Kupujący 1 -> Dostawca 1
-//   { token: "3b89575d", pairId: "T1a", side: "B", caseId: "devy-tani" },     // Dostawca 1 (Devkraft)
-//   { token: "75aadaa4", pairId: "T1b", side: "A", caseId: "devy-solidny" },  // Kupujący 1 -> Dostawca 2
-//   { token: "fdd7bfb1", pairId: "T1b", side: "B", caseId: "devy-solidny" },  // Dostawca 2 (Meridian)
-//   { token: "5c8b22e8", pairId: "T2a", side: "A", caseId: "devy-tani" },     // Kupujący 2 -> Dostawca 1
-//   { token: "7f267edd", pairId: "T2a", side: "B", caseId: "devy-tani" },     // Dostawca 1 (Devkraft)
-//   { token: "929d0504", pairId: "T2b", side: "A", caseId: "devy-solidny" },  // Kupujący 2 -> Dostawca 2
-//   { token: "c7f3f697", pairId: "T2b", side: "B", caseId: "devy-solidny" },  // Dostawca 2 (Meridian)
-// ];
-
-// --- OPCJA C: 1 TRÓJKA + 1 PARA (5 osób) -----------------------------------
-//  KARTY DO DRUKU (5): f42e9dfc (Kupujący-trójka), 83308caf, 3f1edd92 (dostawcy),
-//                      150d0653, 4552ff16 (para). Tokeny 5188e720/28ff4642 WEWNĘTRZNE.
-// export const PARTICIPANTS: Participant[] = [
-//   { token: "5188e720", pairId: "T1a", side: "A", caseId: "devy-tani" },     // Kupujący-trójka -> Dostawca 1
-//   { token: "83308caf", pairId: "T1a", side: "B", caseId: "devy-tani" },     // Dostawca 1 (Devkraft)
-//   { token: "28ff4642", pairId: "T1b", side: "A", caseId: "devy-solidny" },  // Kupujący-trójka -> Dostawca 2
-//   { token: "3f1edd92", pairId: "T1b", side: "B", caseId: "devy-solidny" },  // Dostawca 2 (Meridian)
-//   { token: "150d0653", pairId: "P1",  side: "A", caseId: "devy-tani" },     // Para: Kupujący
-//   { token: "4552ff16", pairId: "P1",  side: "B", caseId: "devy-tani" },     // Para: Devkraft
-// ];
 
 // --- KONSOLE KUPUJĄCEGO (jeden token = dwie rozmowy) — dotyczą układów B/C ---
 export const CONSOLES: BuyerConsole[] = [
-  { token: "00d8871e", roleLabel: "Kupujący (Helios)", title: "Pilna dostawa zespołu — Helios Retail",
+  { token: "b01e316b", roleLabel: "Kupujący (Helios)", title: "Pilna dostawa zespołu — Helios Retail",
     shared: SHARED, brief: BUYER,
-    legs: [{ token: "12ce3aaf", label: "Dostawca 1" }, { token: "75aadaa4", label: "Dostawca 2" }] },
-  { token: "9dd52e3c", roleLabel: "Kupujący (Helios)", title: "Pilna dostawa zespołu — Helios Retail",
+    legs: [{ token: "dd360e84", label: "Dostawca 1" }, { token: "e60835c2", label: "Dostawca 2" }] },
+  { token: "43ec13c3", roleLabel: "Kupujący (Helios)", title: "Pilna dostawa zespołu — Helios Retail",
     shared: SHARED, brief: BUYER,
-    legs: [{ token: "5c8b22e8", label: "Dostawca 1" }, { token: "929d0504", label: "Dostawca 2" }] },
-  { token: "f42e9dfc", roleLabel: "Kupujący (Helios)", title: "Pilna dostawa zespołu — Helios Retail",
+    legs: [{ token: "196d2f09", label: "Dostawca 1" }, { token: "f7a13afb", label: "Dostawca 2" }] },
+  { token: "6c0da32e", roleLabel: "Kupujący (Helios)", title: "Pilna dostawa zespołu — Helios Retail",
     shared: SHARED, brief: BUYER,
-    legs: [{ token: "5188e720", label: "Dostawca 1" }, { token: "28ff4642", label: "Dostawca 2" }] },
+    legs: [{ token: "379a47e5", label: "Dostawca 1" }, { token: "b3efdbe5", label: "Dostawca 2" }] },
 ];
 
 // ---------------------------------------------------------------------------
